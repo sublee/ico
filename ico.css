@@ -4,7 +4,7 @@ html, body {
 }
 
 body {
-  padding: 0 10px 10px;
+  padding: 30px;
   background: url(load.gif) no-repeat center 300px;
 }
 
@@ -20,11 +20,15 @@ body.loaded, body.errored {
   color: #e45;
 }
 
+.fork-me {
+  font-family: 'Courier New', Courier, monospace;
+}
+
 article {
   display: block;
   float: left;
   width: 100px;
-  margin: 20px 10px;
+  margin: 10px;
   padding: 0 10px;
   text-align: center;
 }
@@ -38,7 +42,7 @@ section h2 {
   border: 1px solid;
   border-color: #ccc #eee #f4f4f4;
   padding: 4px;
-  font-family: 'Courier New', monospace;
+  font-family: 'Courier New', Courier, monospace;
   font-size: 11px;
   font-weight: normal;
   line-height: 11px;
@@ -107,8 +111,8 @@ article a:hover img.legacy, article i:hover img.legacy {
 
 article .name {
   display: block;
-  margin-top: 40px;
-  font-family: 'Courier New', monospace;
+  margin-top: 44px;
+  font-family: 'Courier New', Courier, monospace;
   font-size: 11px;
   line-height: 11px;
   height: 22px;

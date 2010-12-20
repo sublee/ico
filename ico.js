@@ -86,7 +86,9 @@ function gallery( data ) {
         $.each( legacyBlobs, function( i, blob ) {
             var article = $( "article#" + blob.id ),
                 generations = article.find( "sub" ),
-                img = article.find( "img:eq(0)" ),
+                imgs = article.find( "img" ),
+                eq = Math.min( blob.generation, imgs.length ),
+                img = imgs.eq( imgs.length - eq ),
                 legacy = img.clone().addClass( "legacy" );
             legacy.attr( "src", blob.img ).insertAfter( img );
             if ( !generations.length ) {
