@@ -23,10 +23,14 @@ function parsePath( path ) {
         url = null,
         img = urlJoin(
             "https://github.com", github.user, github.repo, "raw",
-            github.branch, path
-        );
+            github.branch, encodeURIComponent( path )
+        ),
+        match;
     if ( /\./.exec( name ) ) {
         url = "http://" + name;
+    } else if ( match = /^([^(]+)\((.+)\)/.exec( name ) ) {
+        url = "http://" + match[ 2 ].replace( /\\/g, "/" );
+        name = match[ 1 ];
     }
     return {
         dirname: dirname,
