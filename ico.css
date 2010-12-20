@@ -85,7 +85,8 @@ article sub {
   right: 0;
   bottom: 0;
   padding-right: 2px;
-  font-size: 10px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 11px;
   line-height: 12px;
   color: #999;
 }
@@ -97,8 +98,8 @@ article img {
 }
 
 article img.legacy {
-  padding-left: 10px;
-  background: url(arrow.gif) no-repeat 3px;
+  padding-left: 16px;
+  background: url(arrow.gif) no-repeat 6px;
 }
 
 article img.legacy, article a:hover sub, article i:hover sub {
