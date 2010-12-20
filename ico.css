@@ -72,6 +72,7 @@ article i {
 
 article a:hover {
   border-color: #aaa #999 #666;
+  z-index: 1;
 }
 
 article a:active {
@@ -98,8 +99,8 @@ article img {
 }
 
 article img.legacy {
-  padding-left: 16px;
-  background: url(arrow.gif) no-repeat 6px;
+  padding-left: 14px;
+  background: url(arrow.gif) no-repeat 5px;
 }
 
 article img.legacy, article a:hover sub, article i:hover sub {
