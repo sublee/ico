@@ -17,26 +17,24 @@ function parsePath( path ) {
     var dirname = path.split( "/" ),
         filename = dirname.pop(),
         name = filename.replace( /(\[\d+\])?\.ico$/, "" ).replace( /;/g, "/" ),
-        id = name.replace( /[.\/]/g, "-" ),
         match = filename.match( /\[(\d+)\]\.ico/ ),
         generation = match ? match[ 1 ] : null,
         url = null,
         img = urlJoin(
             "https://github.com", github.user, github.repo, "raw",
             github.branch, encodeURIComponent( path )
-        ),
-        match;
-    if ( /\./.exec( name ) ) {
-        url = "http://" + name;
-    } else if ( match = /^([^(]+)\((.+)\)/.exec( name ) ) {
+        );
+    if ( match = /^([^(]+)\((.+)\)/.exec( name ) ) {
         url = "http://" + match[ 2 ].replace( /\\/g, "/" );
         name = match[ 1 ];
+    } else if ( /\./.exec( name ) ) {
+        url = "http://" + name;
     }
     return {
         dirname: dirname,
         filename: filename,
         name: name,
-        id: id,
+        id: name.replace( /[.\/]/g, "-" ),
         generation: generation,
         url: url,
         img: img
@@ -105,12 +103,6 @@ function gallery( data ) {
 
         var clear = $( "<div></div>" ).css( "clear", "left" );
         clear.appendTo( sectionTemplate.parent() );
-
-        setInterval(function() {
-            var icons = $( "img" ),
-                icon = icons.eq( Math.floor( Math.random() * icons.length ) );
-            $( "link[rel='shortcut icon']" ).attr( "href", icon.attr( "src" ) );
-        }, 1000 );
     } catch ( err ) {
         err = $( "<div class='error'></div>" ).text( err.message );
         $( document.body ).addClass( "errored" ).append( err );
