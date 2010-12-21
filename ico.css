@@ -73,12 +73,14 @@ article i {
 article a:hover {
   border-color: #aaa #999 #666;
   z-index: 1;
+  -webkit-box-shadow: 0 2px 2px rgba(0, 0, 0, .20);
+  -moz-box-shadow: 0 2px 2px rgba(0, 0, 0, .20);
 }
 
 article a:active {
   background: #f4f4f4;
-  padding-top: 11px;
-  padding-bottom: 9px;
+  -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .20);
+  -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, .20);
 }
 
 article sub {
