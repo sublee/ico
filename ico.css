@@ -99,8 +99,8 @@ article img {
 }
 
 article img.legacy {
-  padding-left: 14px;
-  background: url(arrow.gif) no-repeat 5px;
+  padding-top: 14px;
+  background: url(arrow.gif) no-repeat 0 5px;
 }
 
 article img.legacy, article a:hover sub, article i:hover sub {
@@ -108,7 +108,7 @@ article img.legacy, article a:hover sub, article i:hover sub {
 }
 
 article a:hover img.legacy, article i:hover img.legacy {
-  display: inline;
+  display: block;
 }
 
 article .name {
