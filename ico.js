@@ -85,6 +85,10 @@ function gallery( data ) {
             article.appendTo( section );
         });
 
+        legacyBlobs.sort(function( x, y ) {
+            return x.generation < y.generation ? -1 : 1;
+        });
+
         $.each( legacyBlobs, function( i, blob ) {
             var article = $( "article#" + blob.id ),
                 generations = article.find( "sub" ),
