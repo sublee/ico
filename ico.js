@@ -4,16 +4,40 @@ function urlJoin() {
     return Array.prototype.join.call( arguments, "/" );
 }
 
-function blobs( github, callback ) {
-    var prefix = "http://github.com/api/v2/json/blob/all",
-        url = urlJoin( prefix, github.user, github.repo, github.branch ),
+function fetchContents( github, path, callbackName ) {
+    var prefix = "https://api.github.com/repos",
+        suffix = "contents",
+        url = urlJoin( prefix, github.user, github.repo, suffix ),
         script = $( "<script></script>" );
-    callback = callback || "callback";
-    script.attr( "src", url + "?callback=" + callback );
+    if ( path ) {
+        url = urlJoin( url, path );
+    }
+    script.attr( "src", url + "?callback=" + callbackName );
     script.appendTo( document.body );
 }
 
-function parsePath( path ) {
+function collectIconsAndRenderGallery( result ) {
+    var func = arguments.callee;
+    if ( func.todo === undefined ) {
+        func.todo = 0;
+        func.icons = [];
+    } else {
+        func.todo--;
+    }
+    $.each( result.data, function( i, content ) {
+        if ( content.type === "dir" ) {
+            func.todo++;
+            fetchContents( github, content.path, func.name );
+        } else if ( /\.ico$/.exec( content.path ) ) {
+            func.icons.push( parseIconPath( content.path ) );
+        }
+    });
+    if ( !func.todo ) {
+        renderGallery( func.icons );
+    }
+}
+
+function parseIconPath( path ) {
     var dirname = path.split( "/" ),
         filename = dirname.pop(),
         name = filename.replace( /(\[\d+\])?\.ico$/, "" ).replace( /;/g, "/" ),
@@ -41,70 +65,62 @@ function parsePath( path ) {
     };
 }
 
-function gallery( data ) {
+function renderGallery( icons ) {
     try {
-        var blobs = data.blobs,
-            legacyBlobs = [],
+        var legacyIcons = [],
             articleTemplate = $( "article.template" ),
             sectionTemplate = $( "section.template" ),
             realize = function( elem ) {
                 return $( elem ).clone( true ).removeClass( "template" );
             };
-
-        $.each( blobs, function( path, sha ) {
-            if ( !/\.ico$/.exec( path ) ) {
+        $.each( icons, function( i, icon ) {
+            if ( icon.generation ) {
+                legacyIcons.push( icon );
                 return;
             }
-            var blob = parsePath( path );
-
-            if ( blob.generation ) {
-                legacyBlobs.push( blob );
-                return;
-            }
-
             var article = realize( articleTemplate ),
-                sectionId = blob.dirname.join( "-" ),
+                sectionId = icon.dirname.join( "-" ),
                 section = $( "section#" + sectionId );
-
             if ( !section.length ) {
                 section = realize( sectionTemplate );
                 section.attr( "id", sectionId );
-                section.find( "h2" ).text( blob.dirname.join( "/" ) );
+                section.find( "h2" ).text( icon.dirname.join( "/" ) );
                 section.appendTo( sectionTemplate.parent() );
             }
-
-            if ( blob.url ) {
-                article.children( "a" ).attr( "href", blob.url );
+            if ( icon.url ) {
+                article.children( "a" ).attr( "href", icon.url );
             } else {
                 article.find( "img" ).unwrap().wrap( "<i></i>" );
             }
-
-            article.find( "img" ).attr( "src", blob.img );
-            article.find( ".name" ).text( blob.name );
-            article.attr( "id", blob.id );
+            article.find( "img" ).attr( "src", icon.img );
+            article.find( ".name" ).text( icon.name );
+            article.attr( "id", icon.id );
             article.appendTo( section );
         });
-
-        legacyBlobs.sort(function( x, y ) {
+        legacyIcons.sort(function( x, y ) {
             return x.generation < y.generation ? -1 : 1;
         });
-
-        $.each( legacyBlobs, function( i, blob ) {
-            var article = $( "article#" + blob.id ),
+        $.each( legacyIcons, function( i, icon ) {
+            var article = $( "article#" + icon.id ),
                 generations = article.find( "sub" ),
                 imgs = article.find( "img" ),
-                eq = Math.min( blob.generation, imgs.length ),
+                eq = Math.min( icon.generation, imgs.length ),
                 img = imgs.eq( imgs.length - eq ),
                 legacy = img.clone().addClass( "legacy" );
-            legacy.attr( "src", blob.img ).insertAfter( img );
+            legacy.attr( "src", icon.img ).insertAfter( img );
             if ( !generations.length ) {
                 generations = $( "<sub>1</sub>" ).appendTo( img.parent() );
             }
             generations.text( parseInt( generations.text() ) + 1 );
         });
-
+        var sections = $( "section:not(.template)" ).remove();
+        sections.sort(function( x, y ) {
+            x = $( x ).find( "article" ).length,
+            y = $( y ).find( "article" ).length;
+            return x === y ? 0 : x < y ? 1 : -1;
+        });
+        sectionTemplate.parent().append( sections );
         $( document.body ).addClass( "loaded" );
-
         var clear = $( "<div></div>" ).css( "clear", "left" );
         clear.appendTo( sectionTemplate.parent() );
     } catch ( err ) {
@@ -113,4 +129,4 @@ function gallery( data ) {
     }
 }
 
-blobs( github, "gallery" );
+fetchContents( github, null, "collectIconsAndRenderGallery" );
